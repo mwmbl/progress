@@ -1,7 +1,7 @@
 {
   "metrics": {
-    "commits": 1728,
-    "totalPagesIndexed": 5000000,
+    "commits": 1753,
+    "totalPagesIndexed": 2435935700,
     "ndcg": 10,
     "blogPosts": 11,
     "videos": 10,
@@ -10,11 +10,11 @@
     "incorporationPoints": 0,
     "affiliatedOrgs": 0,
     "bookCommits": 57,
-    "collectedAt": "2026-10-08T23:02:58.055Z",
+    "collectedAt": "2026-10-10T01:03:30.194Z",
     "repos": [
       {
         "label": "mwmbl (backend)",
-        "commits": 1474
+        "commits": 1499
       },
       {
         "label": "front-end (SvelteKit)",
@@ -27,8 +27,8 @@
     ]
   },
   "points": {
-    "commits": 1728,
-    "totalPagesIndexed": 250,
+    "commits": 1753,
+    "totalPagesIndexed": 121750,
     "ndcg": 10000,
     "blogPosts": 1100,
     "videos": 1000,
@@ -39,9 +39,9 @@
     "bookCommits": 570
   },
   "totals": {
-    "current": 14674,
+    "current": 136199,
     "max": 915000,
-    "percentage": 1.6037
+    "percentage": 14.8851
   },
   "goals": {
     "technology": {
@@ -99,5 +99,5 @@
       }
     }
   },
-  "collectedAt": "2026-10-08T23:02:58.055Z"
+  "collectedAt": "2026-10-10T01:03:30.194Z"
 }
