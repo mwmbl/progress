@@ -87,10 +87,6 @@ async function getBlogPostCount() {
 }
 
 async function getTotalPagesIndexed() {
-  // Hard-coded to 500k — depends on a turned-off process that estimates
-  // total index size once daily (the crawler stats endpoint is no longer updated)
-  return 500_000;
-  
   try {
     // Public endpoint - no auth needed for crawler stats
     const response = await fetch(`${MWMBL_API_URL}/api/v1/crawler/stats`, {
@@ -100,8 +96,8 @@ async function getTotalPagesIndexed() {
       throw new Error(`HTTP ${response.status}`);
     }
     const data = await response.json();
-    // Get the latest day's results_in_index_daily (total pages in index)
-    const results = data.results_in_index_daily || {};
+    // Get the latest day's urls_in_index_daily (total pages in index)
+    const results = data.urls_in_index_daily || {};
     const dates = Object.keys(results).sort();
     const latestDate = dates[dates.length - 1];
     return results[latestDate] || 0;
