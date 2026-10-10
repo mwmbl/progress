@@ -96,8 +96,8 @@ async function getTotalPagesIndexed() {
       throw new Error(`HTTP ${response.status}`);
     }
     const data = await response.json();
-    // Get the latest day's results_in_index_daily (total pages in index)
-    const results = data.results_in_index_daily || {};
+    // Get the latest day's urls_in_index_daily (total pages in index)
+    const results = data.urls_in_index_daily || {};
     const dates = Object.keys(results).sort();
     const latestDate = dates[dates.length - 1];
     return results[latestDate] || 0;
