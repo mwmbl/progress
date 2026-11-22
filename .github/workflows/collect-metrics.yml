@@ -40,13 +40,28 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+      
       - name: Commit and push to data branch
         run: |
+          # Save generated metrics
+          cp metrics.json /tmp/metrics.json
+
+          # Return the branch to a clean state
+          rm metrics.json
+
+          # Fetch latest remote data branch
+          git fetch origin data
+
           # Switch to data branch
           git checkout data
-          # Add the metrics file
+
+          # Update local data branch from remote
+          git pull --ff-only origin data
+
+          # Restore generated metrics
+          cp /tmp/metrics.json metrics.json
+
+          # Commit and push
           git add metrics.json
-          # Commit with timestamp
           git commit -m "Update metrics: $(date -u +'%Y-%m-%d %H:%M UTC')" || echo "No changes to commit"
-          # Push to data branch
-          git push origin data:data
+          git push origin data
