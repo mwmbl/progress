@@ -1,0 +1,103 @@
+{
+  "metrics": {
+    "commits": 2374,
+    "totalPagesIndexed": 786559084,
+    "ndcg": 10,
+    "blogPosts": 14,
+    "videos": 10,
+    "volunteers": 26,
+    "employees": 0,
+    "incorporationPoints": 0,
+    "affiliatedOrgs": 0,
+    "bookCommits": 103,
+    "collectedAt": "2026-11-22T03:39:18.794Z",
+    "repos": [
+      {
+        "label": "mwmbl (backend)",
+        "commits": 1940
+      },
+      {
+        "label": "front-end (SvelteKit)",
+        "commits": 331
+      },
+      {
+        "label": "book (documentation)",
+        "commits": 103
+      }
+    ]
+  },
+  "points": {
+    "commits": 2374,
+    "totalPagesIndexed": 1179,
+    "ndcg": 10000,
+    "blogPosts": 1400,
+    "videos": 1000,
+    "volunteers": 26,
+    "employees": 0,
+    "incorporation": 0,
+    "affiliatedOrgs": 0,
+    "bookCommits": 1030
+  },
+  "totals": {
+    "current": 17009,
+    "max": 915000,
+    "percentage": 1.8589
+  },
+  "goals": {
+    "technology": {
+      "commits": {
+        "goal": 100000,
+        "pointsPer": 1,
+        "maxPoints": 100000
+      },
+      "totalPagesIndexed": {
+        "goal": 100000000000,
+        "pointsPerMillion": 1.5,
+        "maxPoints": 150000
+      },
+      "ndcg": {
+        "goal": 80,
+        "pointsPerPercent": 1000,
+        "maxPoints": 80000
+      }
+    },
+    "community": {
+      "blogPosts": {
+        "goal": 250,
+        "pointsPer": 100,
+        "maxPoints": 25000
+      },
+      "videos": {
+        "goal": 1000,
+        "pointsPer": 100,
+        "maxPoints": 100000
+      },
+      "volunteers": {
+        "goal": 100000,
+        "pointsPer": 1,
+        "maxPoints": 100000
+      }
+    },
+    "organisation": {
+      "employees": {
+        "goal": 20,
+        "pointsPer": 5000,
+        "maxPoints": 100000
+      },
+      "incorporation": {
+        "maxPoints": 60000
+      },
+      "affiliatedOrgs": {
+        "goal": 100,
+        "pointsPer": 1000,
+        "maxPoints": 100000
+      },
+      "bookCommits": {
+        "goal": 10000,
+        "pointsPer": 10,
+        "maxPoints": 100000
+      }
+    }
+  },
+  "collectedAt": "2026-11-22T03:39:18.794Z"
+}
