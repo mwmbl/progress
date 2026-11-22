@@ -46,19 +46,29 @@ async function getCommitCount(owner, repo) {
 }
 
 async function getBlogPostCount() {
-  try {
-    const response = await octokit.rest.repos.getContent({
-      owner: BLOG_REPO.owner,
-      repo: BLOG_REPO.repo,
-      path: BLOG_REPO.path,
-    });
-    const items = Array.isArray(response.data) ? response.data : [response.data];
-    // Count markdown files (blog posts)
-    return items.filter((item) => item.name.endsWith(".md") || item.name.endsWith(".markdown")).length;
-  } catch (error) {
-    console.warn("Failed to get blog post count:", error.message);
-    throw new Error("Failed to get blog post count");
+  const response = await octokit.rest.git.getTree({
+    owner: BLOG_REPO.owner,
+    repo: BLOG_REPO.repo,
+    tree_sha: "HEAD",
+    recursive: "true",
+  });
+
+  const items = response.data;
+  
+  const markdownFiles = response.data.tree.filter(
+    (item) =>
+      item.type === "blob" &&
+      item.path.startsWith(`${BLOG_REPO.path}/`) &&
+      item.path.endsWith(".md")
+  );
+
+  if (markdownFiles.length === 0) {
+    throw new Error(
+      "No blog posts found; refusing to overwrite existing count"
+    );
   }
+
+  return markdownFiles.length;
 }
 
 async function getTotalPagesIndexed() {

@@ -2,6 +2,12 @@
 
 Automated progress tracking for the Mwmbl search engine, displayed at **progress.mwmbl.org** (GitHub Pages).
 
+- Run via `npm run collect` to test locally.
+- Triggers nightly at 2AM UTC. Check [Actions](https://github.com/mwmbl/progress/actions) for run history.
+
+---
+
+
 ## Architecture
 
 ```

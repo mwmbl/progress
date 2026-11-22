@@ -42,11 +42,11 @@ jobs:
 
       - name: Commit and push to data branch
         run: |
-          # Create or switch to data branch
-          git checkout -B data
+          # Switch to data branch
+          git checkout data
           # Add the metrics file
           git add metrics.json
           # Commit with timestamp
           git commit -m "Update metrics: $(date -u +'%Y-%m-%d %H:%M UTC')" || echo "No changes to commit"
-          # Force push to data branch (overwrites previous)
-          git push -f origin data:data
+          # Push to data branch
+          git push origin data:data
