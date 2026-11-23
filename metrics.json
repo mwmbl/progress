@@ -4,13 +4,13 @@
     "totalPagesIndexed": 786559084,
     "ndcg": 10,
     "blogPosts": 14,
-    "videos": 10,
+    "videos": 22,
     "volunteers": 26,
     "employees": 0,
     "incorporationPoints": 0,
     "affiliatedOrgs": 0,
     "bookCommits": 103,
-    "collectedAt": "2026-11-22T16:40:39.885Z",
+    "collectedAt": "2026-11-23T02:07:53.889Z",
     "repos": [
       {
         "label": "mwmbl (backend)",
@@ -31,7 +31,7 @@
     "totalPagesIndexed": 1179,
     "ndcg": 10000,
     "blogPosts": 1400,
-    "videos": 1000,
+    "videos": 2200,
     "volunteers": 26,
     "employees": 0,
     "incorporation": 0,
@@ -39,9 +39,9 @@
     "bookCommits": 1030
   },
   "totals": {
-    "current": 17062,
+    "current": 18262,
     "max": 915000,
-    "percentage": 1.8647
+    "percentage": 1.9958
   },
   "goals": {
     "technology": {
@@ -99,5 +99,5 @@
       }
     }
   },
-  "collectedAt": "2026-11-22T16:40:39.885Z"
+  "collectedAt": "2026-11-23T02:07:53.889Z"
 }
