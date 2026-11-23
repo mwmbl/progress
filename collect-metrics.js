@@ -3,12 +3,14 @@
  * Collect all progress metrics and write to metrics.json
  * Run via: npm run collect
  * Requires: MWMBL_API_URL env var
+ * Optional: YOUTUBE_API_KEY (for YouTube API access)
  * Optional: GITHUB_TOKEN (for higher rate limits)
  */
 
 import { Octokit } from "octokit";
 import fs from "fs";
 import path from "path";
+import { youtube } from "./youtube.js";
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const MWMBL_API_URL = process.env.MWMBL_API_URL || "https://api.mwmbl.org";
@@ -69,29 +71,6 @@ async function getBlogPostCount() {
   }
 
   return markdownFiles.length;
-}
-
-async function getYouTubeVideoCount() {
-  try {
-    const response = await fetch("https://www.youtube.com/@mwmbl/videos", {
-      headers: {
-        "User-Agent": "Mozilla/5.0",
-      },
-    });
-
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-    const html = await response.text();
-
-    const match = html.match(/"([\d,]+) videos"/);
-
-    if (!match) throw new Error("Video count not found");
-
-    return Number(match[1]);
-  } catch (error) {
-    console.warn("Failed to scrape YouTube video count:", error.message);
-    return 0;
-  }
 }
 
 async function getTotalPagesIndexed() {
@@ -181,7 +160,7 @@ async function main() {
   // Collect all metrics - use Promise.allSettled to handle individual failures
   const commitResultsPromise = Promise.allSettled(REPOS.map(r => getCommitCount(r.owner, r.repo)));
   const blogPostsPromise = Promise.allSettled([getBlogPostCount()]);
-  const youtubeVidoCountPromise = Promise.allSettled([getYouTubeVideoCount()]);
+  const youtubeVidoCountPromise = Promise.allSettled([youtube.getVideoCount()]);
   const totalPagesIndexedPromise = Promise.allSettled([getTotalPagesIndexed()]);
   const ndcgPromise = Promise.allSettled([getNDCGScore()]);
 
