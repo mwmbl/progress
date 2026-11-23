@@ -10,7 +10,7 @@
     "incorporationPoints": 0,
     "affiliatedOrgs": 0,
     "bookCommits": 103,
-    "collectedAt": "2026-11-23T02:11:30.700Z",
+    "collectedAt": "2026-11-23T10:03:49.657Z",
     "repos": [
       {
         "label": "mwmbl (backend)",
@@ -99,5 +99,5 @@
       }
     }
   },
-  "collectedAt": "2026-11-23T02:11:30.700Z"
+  "collectedAt": "2026-11-23T10:03:49.657Z"
 }
