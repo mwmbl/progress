@@ -105,7 +105,7 @@ function renderCategoryTable(categoryName, metrics, goals, manualConfig) {
 
     let goalDisplay = formatNumber(goal);
 
-    const isManual = (categoryName === "community" && ["videos", "volunteers"].includes(def.key)) ||
+    const isManual = (categoryName === "community" && ["volunteers"].includes(def.key)) ||
                      (categoryName === "organisation" && ["employees", "incorporationPoints", "affiliatedOrgs"].includes(def.key));
 
     rows.push(`
