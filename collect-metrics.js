@@ -71,6 +71,29 @@ async function getBlogPostCount() {
   return markdownFiles.length;
 }
 
+async function getYouTubeVideoCount() {
+  try {
+    const response = await fetch("https://www.youtube.com/@mwmbl/videos", {
+      headers: {
+        "User-Agent": "Mozilla/5.0",
+      },
+    });
+
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const html = await response.text();
+
+    const match = html.match(/"([\d,]+) videos"/);
+
+    if (!match) throw new Error("Video count not found");
+
+    return Number(match[1]);
+  } catch (error) {
+    console.warn("Failed to scrape YouTube video count:", error.message);
+    return 0;
+  }
+}
+
 async function getTotalPagesIndexed() {
   try {
     // Public endpoint - no auth needed for crawler stats
@@ -158,12 +181,14 @@ async function main() {
   // Collect all metrics - use Promise.allSettled to handle individual failures
   const commitResultsPromise = Promise.allSettled(REPOS.map(r => getCommitCount(r.owner, r.repo)));
   const blogPostsPromise = Promise.allSettled([getBlogPostCount()]);
+  const youtubeVidoCountPromise = Promise.allSettled([getYouTubeVideoCount()]);
   const totalPagesIndexedPromise = Promise.allSettled([getTotalPagesIndexed()]);
   const ndcgPromise = Promise.allSettled([getNDCGScore()]);
 
-  const [commitResults, blogPosts, totalPagesIndexed, ndcg] = await Promise.all([
+  const [commitResults, blogPosts, youtubeVideoCount, totalPagesIndexed, ndcg] = await Promise.all([
     commitResultsPromise,
     blogPostsPromise,
+    youtubeVidoCountPromise,
     totalPagesIndexedPromise,
     ndcgPromise,
   ]);
@@ -200,6 +225,7 @@ async function main() {
   }
 
   const blogPostCount = getSettledValue(blogPosts, "blog post count", existingMetrics?.metrics?.blogPosts ?? 0);
+  const youtubeVideoCountValue = getSettledValue(youtubeVideoCount, "YouTube video count", existingMetrics?.metrics?.youtubeVideoCount ?? 0);
   const pagesIndexed = getSettledValue(totalPagesIndexed, "total pages indexed", existingMetrics?.metrics?.totalPagesIndexed ?? 500_000);
   const ndcgScore = getSettledValue(ndcg, "NDCG score", existingMetrics?.metrics?.ndcg ?? 10);
 
@@ -231,7 +257,7 @@ async function main() {
     ndcg: ndcgScore,
     // Community
     blogPosts: blogPostCount,
-    videos: manualMetrics.community.videos.value,
+    videos: youtubeVideoCountValue,
     volunteers: manualMetrics.community.volunteers.value,
     // Organisation
     employees: manualMetrics.organisation.employees.value,
