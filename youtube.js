@@ -5,10 +5,10 @@ const SEARCH_QUERY = "mwmbl";
 /**
  * Gets the number of unique YouTube videos associated with Mwmbl.
  *
- * Includes videos uploaded by the official Mwmbl channel and videos
- * returned by a YouTube search for "mwmbl".
+ * Includes all official channel uploads and search results
+ * whose titles contain "mwmbl".
  *
- * @returns {Promise<number>} The number of unique videos.
+ * @returns {Promise<number>}
  */
 async function getVideoCount() {
   const apiKey = process.env.YOUTUBE_API_KEY;
@@ -22,8 +22,6 @@ async function getVideoCount() {
     searchForMwmblVideoIds(apiKey),
   ]);
 
-  console.log(JSON.stringify(searchVideoIds))
-
   return new Set([...channelVideoIds, ...searchVideoIds]).size;
 }
 
@@ -34,23 +32,23 @@ async function getVideoCount() {
  * @returns {Promise<string[]>}
  */
 async function getChannelVideoIds(apiKey) {
-  const channelUrl = new URL(
+  const url = new URL(
     "https://www.googleapis.com/youtube/v3/channels"
   );
 
-  channelUrl.searchParams.set("part", "contentDetails");
-  channelUrl.searchParams.set("forHandle", CHANNEL_HANDLE);
-  channelUrl.searchParams.set("key", apiKey);
+  url.searchParams.set("part", "contentDetails");
+  url.searchParams.set("forHandle", CHANNEL_HANDLE);
+  url.searchParams.set("key", apiKey);
 
-  const channelResponse = await fetch(channelUrl);
+  const response = await fetch(url);
 
-  if (!channelResponse.ok) {
-    throw new Error(`YouTube API failed: HTTP ${channelResponse.status}`);
+  if (!response.ok) {
+    throw new Error(`YouTube API failed: HTTP ${response.status}`);
   }
 
-  const channelData = await channelResponse.json();
+  const data = await response.json();
   const uploadsPlaylistId =
-    channelData.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
+    data.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
 
   if (!uploadsPlaylistId) {
     throw new Error("YouTube channel not found");
@@ -95,6 +93,7 @@ async function getChannelVideoIds(apiKey) {
 
 /**
  * Searches YouTube for videos matching Mwmbl.
+ * Only includes results whose titles contain "mwmbl".
  *
  * @param {string} apiKey
  * @returns {Promise<string[]>}
@@ -125,47 +124,40 @@ async function searchForMwmblVideoIds(apiKey) {
     }
 
     const data = await response.json();
-    
-    getVideoDetails();
+
+    const pageVideoIds = (data.items ?? [])
+      .map((item) => item.id.videoId)
+      .filter(Boolean);
+
+    const videos = await getVideoDetails(apiKey, pageVideoIds);
 
     videoIds.push(
-      ...(data.items ?? []).map((item) => item.id.videoId)
+      ...videos
+        .filter((video) => /mwmbl/i.test(video.title))
+        .map((video) => video.id)
     );
 
     nextPageToken = data.nextPageToken;
   } while (nextPageToken);
 
+  /**
+   * NOTE: Uncomment the line below to see video details.
+   * console.table(videos);
+   */
+
   return videoIds;
 }
 
-export const youtube = {
-  getVideoCount,
-};
-
-
-const VIDEO_IDS = [
-  "8FPWDlk-Fsk", "2SALX4RgfuU", "-x9MtadE9wY",
-  "pGRY7kkKw-s", "53sYMXplgyQ", "bLc5qkHUUJY",
-  "2VVwmkOEuMY", "Fd0-EMJbRWc", "ZQcN7ImqAXQ",
-  "-ATk69Oet3s", "DBUOaHyj254", "tuoexQccCk8",
-  "Q130KKaeTLw", "EFiRLrdk1vE", "WmYDucHvQIk",
-  "4FaoQhYeeDE", "mo5jWDOKhO8", "1FHN1UJsPIk",
-  "wdXC3PAJRD0", "ikYVNKh6OuI", "vPl7_lT6rKM",
-  "GzgEMM-yBdI", "kW1rgVHmTeU", "MwMBl-gHmfU",
-  "MwMBL-71Py0", "MWmBL-VoIiY", "mWmBl-M1Q-Y",
-  "8L-Mwmbl-XE", "ipl-mwmBL-A", "MwMbL-on0A0",
-  "mwmBl-9zFSk", "MWMbL-EpiVY", "LQ-mwmBl-bY",
-  "7VR6Wvdls_E", "uMRD2zX2qcc", "mWmBl-qvLpY",
-  "EM1OOL9xJw8", "I9Ow2l-2v2I", "MWmbl-HdErk",
-  "mwMBL-TQQjk", "MwmBl-TUfUI", "mwmbL-kC6Vk",
-  "mwMBl-6lQYI", "mwmbL-WRLiA", "l0S4QDHctsM",
-];
-
-async function getVideoDetails() {
-  const apiKey = process.env.YOUTUBE_API_KEY;
-
-  if (!apiKey) {
-    throw new Error("YOUTUBE_API_KEY is not configured");
+/**
+ * Gets video metadata for a list of IDs.
+ *
+ * @param {string} apiKey
+ * @param {string[]} videoIds
+ * @returns {Promise<Array<{id: string, title: string, channel: string}>>}
+ */
+async function getVideoDetails(apiKey, videoIds) {
+  if (videoIds.length === 0) {
+    return [];
   }
 
   const url = new URL(
@@ -173,7 +165,7 @@ async function getVideoDetails() {
   );
 
   url.searchParams.set("part", "snippet");
-  url.searchParams.set("id", VIDEO_IDS.join(","));
+  url.searchParams.set("id", videoIds.join(","));
   url.searchParams.set("key", apiKey);
 
   const response = await fetch(url);
@@ -184,24 +176,13 @@ async function getVideoDetails() {
 
   const data = await response.json();
 
-  const videos = new Map(
-    data.items.map((item) => [
-      item.id,
-      {
-        title: item.snippet.title,
-        channel: item.snippet.channelTitle,
-      },
-    ])
-  );
-
-  return VIDEO_IDS.map((id) => ({
-    id,
-    url: `https://www.youtube.com/watch?v=${id}`,
-    title: videos.get(id)?.title ?? "Unavailable",
-    channel: videos.get(id)?.channel ?? null,
+  return (data.items ?? []).map((item) => ({
+    id: item.id,
+    title: item.snippet.title,
+    channel: item.snippet.channelTitle,
   }));
 }
 
-const videos = await getVideoDetails();
-
-console.table(videos);
+export const youtube = {
+  getVideoCount,
+};
