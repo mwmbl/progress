@@ -3,12 +3,14 @@
  * Collect all progress metrics and write to metrics.json
  * Run via: npm run collect
  * Requires: MWMBL_API_URL env var
+ * Optional: YOUTUBE_API_KEY (for YouTube API access)
  * Optional: GITHUB_TOKEN (for higher rate limits)
  */
 
 import { Octokit } from "octokit";
 import fs from "fs";
 import path from "path";
+import { youtube } from "./youtube.js";
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const MWMBL_API_URL = process.env.MWMBL_API_URL || "https://api.mwmbl.org";
@@ -158,12 +160,14 @@ async function main() {
   // Collect all metrics - use Promise.allSettled to handle individual failures
   const commitResultsPromise = Promise.allSettled(REPOS.map(r => getCommitCount(r.owner, r.repo)));
   const blogPostsPromise = Promise.allSettled([getBlogPostCount()]);
+  const youtubeVidoCountPromise = Promise.allSettled([youtube.getVideoCount()]);
   const totalPagesIndexedPromise = Promise.allSettled([getTotalPagesIndexed()]);
   const ndcgPromise = Promise.allSettled([getNDCGScore()]);
 
-  const [commitResults, blogPosts, totalPagesIndexed, ndcg] = await Promise.all([
+  const [commitResults, blogPosts, youtubeVideoCount, totalPagesIndexed, ndcg] = await Promise.all([
     commitResultsPromise,
     blogPostsPromise,
+    youtubeVidoCountPromise,
     totalPagesIndexedPromise,
     ndcgPromise,
   ]);
@@ -200,6 +204,7 @@ async function main() {
   }
 
   const blogPostCount = getSettledValue(blogPosts, "blog post count", existingMetrics?.metrics?.blogPosts ?? 0);
+  const youtubeVideoCountValue = getSettledValue(youtubeVideoCount, "YouTube video count", existingMetrics?.metrics?.youtubeVideoCount ?? 0);
   const pagesIndexed = getSettledValue(totalPagesIndexed, "total pages indexed", existingMetrics?.metrics?.totalPagesIndexed ?? 500_000);
   const ndcgScore = getSettledValue(ndcg, "NDCG score", existingMetrics?.metrics?.ndcg ?? 10);
 
@@ -231,7 +236,7 @@ async function main() {
     ndcg: ndcgScore,
     // Community
     blogPosts: blogPostCount,
-    videos: manualMetrics.community.videos.value,
+    videos: youtubeVideoCountValue,
     volunteers: manualMetrics.community.volunteers.value,
     // Organisation
     employees: manualMetrics.organisation.employees.value,
