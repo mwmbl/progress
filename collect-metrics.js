@@ -24,6 +24,7 @@ const REPOS = [
   { owner: "mwmbl", repo: "mwmbl", label: "mwmbl (backend)" },
   { owner: "mwmbl", repo: "front-end", label: "front-end (SvelteKit)" },
   { owner: "mwmbl", repo: "book", label: "book (documentation)" },
+  { owner: "mwmbl", repo: "progress", label: "progress (documentation)" },
 ];
 
 // Blog repo for post count
